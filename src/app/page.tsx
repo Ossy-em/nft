@@ -1,11 +1,15 @@
 import Image from "next/image";
 import About from "./components/about";
+import Collections from "./components/collections"
+import Faq from "./components/faq";
+import Footer from "@/app/components/footer"
+
 
 export default function Home() {
   return (
     <div className="flex flex-col w-screen h-full bg-black overflow-hidden">
 
-      <nav className="flex w-[1361px] h-[84px] p-[27px] bg-black text-white gap-140 pr-[27px] items-center">
+      <nav className="flex w-screen h-[84px] p-[27px] bg-black text-white gap-140 pr-[27px] items-center">
 
         <div className="pl-9.5 ">
           <Image
@@ -42,9 +46,12 @@ export default function Home() {
         </div>
       </nav>
 
-<div className="w-[1512px] h-[7600]">
+<div className="w-[1512px] h-[7000] ">
 
   <About/>
+  <Collections/>
+    <Faq/>
+    <Footer/>
 
 </div>
     </div>
