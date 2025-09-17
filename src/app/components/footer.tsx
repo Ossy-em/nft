@@ -10,10 +10,10 @@ export default function Footer() {
         </h2>
 
         <nav className="flex gap-6 mb-4 md:mb-0 text-[17px] text-[#ddd9d9]">
-          <a href="#" className="hover:text-gray-400">
+          <a href="#" className="hover:text-gray-400 hover:underline">
             Buy a Punk
           </a>
-          <a href="#" className="hover:text-gray-400">
+          <a href="#" className="hover:text-gray-400 hover:underline">
             View Full Collection
           </a>
         </nav>
@@ -28,9 +28,9 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="border-t border-gray-700 my-4"></div>
+      <div className="border-t border-gray-700 my-10"></div>
 
-      <div className="flex flex-col md:flex-row items-center justify-center text-center text-sm gap-6">
+      <div className="flex flex-col md:flex-row items-center justify-center text-center text-sm gap-6 mt-14">
         <p>© 2021 CryptoPunks. All rights reserved.</p>
         <div className="flex gap-6 mt-4 md:mt-0">
           <a href="#" className="hover:text-white">

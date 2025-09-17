@@ -1,8 +1,44 @@
+"use client"
 
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import Image from "next/image"
 import { MdArrowOutward } from "react-icons/md";
+import { useRouter } from "next/navigation";
+
 
 export default function About() {
+    const [isConnected, setIsConnected] = useState(false);
+    const [mintedCount, setMintedCount] = useState(0)
+
+
+    const router = useRouter()
+
+    const handleAction = (action: () => void) => {
+        if (!isConnected) {
+            router.push("/login");
+        } else {
+            action();
+        }
+        console.log("tapped")
+    }
+    const handleClick = () => {
+        router.push("/collections");
+    };
+
+    const { data, isLoading, isError } = useQuery({
+        queryKey: ['article'], queryFn: async () => { const res = await fetch('https://dev.to/api/articles?per_page=5'); return res.json() },
+    });
+
+
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center h-64">
+                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-white"></div>
+                <span className="ml-3 text-white text-lg font-medium">Loading...</span>
+            </div>
+        );
+    }
 
 
     return (
@@ -12,7 +48,7 @@ export default function About() {
                     <h1 className=" text-[44px] h-20 text-center">The project that inspired the modern <span className="font-bold">CrytoArt movement</span> </h1>
                     <p className=" w-[650px] h-16 text-[20px] p-2 text-center mx-auto">10,000 unique collectible characters with proof of ownership stored on the Ethereum blockchain.</p>
                     <div className="mt-9 w-[165px] h-[59px] bg-white p-3 rounded-[100px]">
-                        <button className="text-black text-[20px]">
+                        <button className="text-black text-[20px]" onClick={() => handleAction(() => setMintedCount(mintedCount + 1))}>
                             Mint <span className="font-bold">now</span>
                         </button>
                     </div>
@@ -59,56 +95,32 @@ export default function About() {
                 <h1 className="mt-[100px] h-10 font-medium text-4xl">Featured in</h1>
 
                 <div className="flex grid-rows-3 w-[1301px] h-[316px] mt-[74px] items-center gap-3 px-[40px]">
-                    <div className="flex flex-col w-[390px] h-[306px] border-1 border-[#565656] rounded-3xl ">
-                        <div className="flex flex-col gap-4 px-4 pb-[51px] border-b-2 border-[#565656]">
-                            <Image
-                                src="/about/Image (9).svg"
-                                alt="image"
-                                width={125}
-                                height={20}
-                                className="mt-6" />
-                            <p className="w-[354px] h-[105px] text-2xl pr-4">This ethereum-based project could change how we think about digital art</p>
-                        </div>
 
-                        <div className=" w-[358px] h-10 px-4 flex justify-between py-5">
-                            <h1 className="text-[20px] ">Read article</h1>
-                            <MdArrowOutward className="text-white w-[16px] h-[16px] cursor-pointer" />
-                        </div>
-                    </div>
 
-                    <div className="flex flex-col w-[390px] h-[306px] border-1 border-[#565656] rounded-3xl ">
-                        <div className="flex flex-col gap-4 px-4 pb-[51px] border-b-2 border-[#565656]">
-                            <Image
-                                src="/about/Image (9).svg"
-                                alt="image"
-                                width={125}
-                                height={20}
-                                className="mt-6" />
-                            <p className="w-[354px] h-[105px] text-2xl pr-4">CryptoKitties, CryptoPunks and the birth of a cottage industry</p>
-                        </div>
+                    {data?.slice(0, 3).map((article) => (
+                        <div key={article.id} className="flex flex-col w-[390px] h-[306px] border-1 border-[#565656] rounded-3xl ">
+                            <div className="flex flex-col gap-4 px-4 pb-[51px] border-b-2 border-[#565656]">
+                                <Image
+                                    src="/about/Image (9).svg"
+                                    alt="image"
+                                    width={125}
+                                    height={20}
+                                    className="mt-6" />
+                                <p className="w-[354px] h-[105px] text-2xl pr-4">{article.title}</p>
+                            </div>
 
-                        <div className=" w-[358px] h-10 px-4 flex justify-between py-5">
-                            <h1 className="text-[20px] ">Read article</h1>
-                            <MdArrowOutward className="text-white w-[16px] h-[16px] cursor-pointer" />
-                        </div>
-                    </div>
+                            <div className=" w-[358px] h-10 px-4 flex justify-between py-5">
+                                <h1 className="text-[20px] ">Read article</h1>
 
-                    <div className="flex flex-col w-[390px] h-[306px] border-1 border-[#565656] rounded-3xl ">
-                        <div className="flex flex-col gap-4 px-4 pb-[51px] border-b-2 border-[#565656]">
-                            <Image
-                                src="/about/Image (9).svg"
-                                alt="image"
-                                width={125}
-                                height={20}
-                                className="mt-6" />
-                            <p className="w-[354px] h-[105px] text-2xl pr-4">‘Obviously, we had no idea it was going to get here,’ say the guys who made the first NFT</p>
+                                <MdArrowOutward
+                                    onClick={() => window.open(article.url, "_blank")}
+                                    className="text-white w-[16px] h-[16px] cursor-pointer"
+                                />
+                            </div>
                         </div>
+                    ))}
 
-                        <div className=" w-[358px] h-10 px-4 flex justify-between py-5">
-                            <h1 className="text-[20px] ">Read article</h1>
-                            <MdArrowOutward className="text-white w-[16px] h-[16px] cursor-pointer" />
-                        </div>
-                    </div>
+
                 </div>
 
             </div>
@@ -123,7 +135,7 @@ export default function About() {
                                 <button className="flex flex-row text-black  w-[178px] h-[59px] bg-white justify-center  py-3 text-[19px] font-medium cursor-pointer rounded-[100px]">
                                     Buy a Punk
                                 </button>
-                                <button className="flex flex-row text-white  w-[256px] h-[61px] bg-black  justify-center py-3 text-[20px] font-medium cursor-pointer rounded-[100px] border-1 border-[#565656]">
+                                <button onClick={handleClick} className="flex flex-row text-white  w-[256px] h-[61px] bg-black  justify-center py-3 text-[20px] font-medium cursor-pointer rounded-[100px] border-1 border-[#565656]">
                                     View full collection
                                 </button>
                             </div>

@@ -1,3 +1,6 @@
+"use client"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useState } from "react";
 import Image from "next/image";
 import About from "./components/about";
 import Collections from "./components/collections"
@@ -6,6 +9,10 @@ import Footer from "@/app/components/footer"
 
 
 export default function Home() {
+
+  const queryClient = new QueryClient()
+  const [isConnected, setIsConnected] = useState(false);
+const [walletAddress, setWalletAddress] = useState("0x5aAe09f337Ef1BeAed");
   return (
     <div className="flex flex-col w-screen h-full bg-black overflow-hidden">
 
@@ -48,7 +55,8 @@ export default function Home() {
 
 <div className="w-[1512px] h-[7000] ">
 
-  <About/>
+<QueryClientProvider client={queryClient}><About/></QueryClientProvider>
+  
   <Collections/>
     <Faq/>
     <Footer/>

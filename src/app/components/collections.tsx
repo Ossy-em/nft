@@ -2,8 +2,15 @@ import Image from "next/image"
 import { HiArrowSmallRight } from "react-icons/hi2";
 import { HiArrowSmallLeft } from "react-icons/hi2";
 import Punk from "@/app/components/how-to-get-punk"
+import { useRouter } from "next/navigation";
 
 export default function Collections() {
+
+    const router = useRouter()
+    const handleViewAll = () => {
+        router.push('/largest-sales')
+    }
+    console.log(handleViewAll)
     return (
         <section className=" bg-white pt-[163px] py-16 w-screen mb-0 h-[2887px] overflow-hidden">
             <div className="px-10">
@@ -11,7 +18,7 @@ export default function Collections() {
                 <h2 className="text-[52px] font-medium">Largest Sales</h2>
 
                 <div className="h-[61px] w-[149px] rounded-[100px] border pr-9 pl-10 pt-3.5 pb-4 border-[#b2b9b9] cursor-pointer">
-                    <button className="text-[20px] font-medium cursor-pointer">View all</button>
+                    <button onClick={handleViewAll} className="text-[20px] font-medium cursor-pointer">View all</button>
                 </div>
             </div>
 
