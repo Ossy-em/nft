@@ -1,6 +1,6 @@
 export default function HowToGetPunk() {
   return (
-    <section className=" flex flex-row justify-between bg-black mt-20 text-white px-16 py-20 rounded-t-[40px] ">
+    <section className=" flex flex-row justify-between bg-black text-white py-20 rounded-t-[40px] ">
       <h2 className="text-5xl font-medium mb-16 pt-12">How do I get a punk?</h2>
 
       <div className="relative flex flex-col pt-12">

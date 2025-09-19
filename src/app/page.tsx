@@ -53,14 +53,15 @@ const [walletAddress, setWalletAddress] = useState("0x5aAe09f337Ef1BeAed");
         </div>
       </nav>
 
-<div className="w-[1512px] h-[7000] ">
+<div className="w-screen h-fit ">
 
 <QueryClientProvider client={queryClient}><About/></QueryClientProvider>
   
   <Collections/>
-    <Faq/>
+  <div className="bg-white">
+ <Faq/>
     <Footer/>
-
+  </div>
 </div>
     </div>
   )

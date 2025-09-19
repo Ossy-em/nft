@@ -1,159 +1,160 @@
-import Image from "next/image"
-import { HiArrowSmallRight } from "react-icons/hi2";
-import { HiArrowSmallLeft } from "react-icons/hi2";
-import Punk from "@/app/components/how-to-get-punk"
-import { useRouter } from "next/navigation";
+"use client"
+import React, { useRef } from "react"
+import { useQuery } from "@tanstack/react-query"
+import { HiArrowSmallRight, HiArrowSmallLeft } from "react-icons/hi2"
+import SkeletonSaleCard from "@/components/SkeletonSaleCard"
 
 export default function Collections() {
+  const salesScrollRef = useRef<HTMLDivElement>(null)
+  const txScrollRef = useRef<HTMLDivElement>(null)
 
-    const router = useRouter()
-    const handleViewAll = () => {
-        router.push('/largest-sales')
-    }
-    console.log(handleViewAll)
-    return (
-        <section className=" bg-white pt-[163px] py-16 w-screen mb-0 h-[2887px] overflow-hidden">
-            <div className="px-10">
-            <div className="flex flex-row items-center justify-between h-[67px]">
-                <h2 className="text-[52px] font-medium">Largest Sales</h2>
+  // Fetch largest sales
+  const { data: salesData, isLoading: isSalesLoading } = useQuery({
+    queryKey: ["largestSales"],
+    queryFn: async () => {
+      const res = await fetch(
+        "https://api.opensea.io/api/v2/events/collection/cryptopunks?event_type=sale&limit=42",
+        { headers: { "X-API-KEY": process.env.NEXT_PUBLIC_OPENSEA_API_KEY || "" } }
+      )
+      return res.json()
+    },
+  })
 
-                <div className="h-[61px] w-[149px] rounded-[100px] border pr-9 pl-10 pt-3.5 pb-4 border-[#b2b9b9] cursor-pointer">
-                    <button onClick={handleViewAll} className="text-[20px] font-medium cursor-pointer">View all</button>
-                </div>
-            </div>
+  // Fetch recent transactions
+  const { data: txData, isLoading: isTxLoading } = useQuery({
+    queryKey: ["recentTransactions"],
+    queryFn: async () => {
+      const res = await fetch(
+        "https://api.opensea.io/api/v2/events/collection/cryptopunks?event_type=transfer&limit=42",
+        { headers: { "X-API-KEY": process.env.NEXT_PUBLIC_OPENSEA_API_KEY || "" } }
+      )
+      return res.json()
+    },
+  })
 
-            <div className="mt-[93px] h-173 flex flex-col overflow-x-scroll">
-                <div className="flex flex-row">
-                    <div className="flex flex-col w-100 h-143 gap-[27px]">
-                        <Image
-                            src="/collections/Frame (1).svg"
-                            alt="collections"
-                            width={360}
-                            height={360}
-                        />
-                        <div className="w-[420px] h-[70px]">
-                            <h3 className="font-medium text-[26px]">#3100</h3>
-                            <span className="font-medium text-[20px]">4.2KΞ ($7.58M)</span>
-                        </div>
-                        <h5 className="font-medium text-[17px]">Mar 11, 2021</h5>
+  const scrollAmount = 384
+
+  // Scroll helpers
+  const scrollLeft = (ref: React.RefObject<HTMLDivElement>) => {
+    ref.current?.scrollBy({ left: -scrollAmount, behavior: "smooth" })
+  }
+  const scrollRight = (ref: React.RefObject<HTMLDivElement>) => {
+    ref.current?.scrollBy({ left: scrollAmount, behavior: "smooth" })
+  }
+
+  return (
+    <section className="bg-white pt-[163px] py-16 w-screen mb-0 overflow-hidden">
+      <div className="px-10">
+
+        {/* Largest Sales */}
+        <div className="flex flex-row items-center justify-between h-[67px]">
+          <h2 className="text-[52px] font-medium">Largest Sales</h2>
+        </div>
+
+        <div className="mt-[53px] flex flex-col">
+          <div
+            ref={salesScrollRef}
+            className="flex gap-6 overflow-x-hidden scroll-smooth"
+            style={{ width: "100%" }}
+          >
+            {isSalesLoading
+              ? Array.from({ length: 3 }).map((_, i) => <SkeletonSaleCard key={i} />)
+              : salesData?.asset_events?.map((event, i) => (
+                  <div
+                    key={`${event.transaction}-${i}`}
+                    className="bg-white rounded-2xl flex-shrink-0 w-[360px]"
+                  >
+                    <img
+                      src={event.nft?.image_url || event.asset?.image_url}
+                      alt="NFT"
+                      className="w-full h-[360px] object-cover rounded-2xl"
+                    />
+                    <div className="p-4 text-black">
+                      <h3 className="font-medium text-lg">
+                        {event.nft?.name || event.asset?.name}
+                      </h3>
+                      <span className="font-medium">
+                        {(Number(event.payment.quantity) /
+                          10 ** event.payment.decimals).toFixed(2)} Ξ
+                      </span>
                     </div>
+                  </div>
+                ))}
+          </div>
+        </div>
 
-                    <div className="flex flex-col w-100 h-143 gap-[27px]">
-                        <Image
-                            src="/collections/Image.svg"
-                            alt="collections"
-                            width={360}
-                            height={360}
-                        />
-                        <div className="w-[420px] h-[70px]">
-                            <h3 className="font-medium text-[26px]">#4140</h3>
-                            <span className="font-medium text-[20px]">4.2KΞ ($7.57M)</span>
-                        </div>
-                        <h5 className="font-medium text-[17px]">Mar 11, 2021</h5>
+        <div className="flex flex-row items-center gap-2.5 mt-4">
+          <div className="w-[55px] h-[55px] rounded-full border border-[#aab4b4] p-3">
+            <HiArrowSmallLeft
+              onClick={() => scrollLeft(salesScrollRef)}
+              className="w-[30px] h-[30px] cursor-pointer"
+            />
+          </div>
+          <div className="w-[55px] h-[55px] rounded-full border border-[#aab4b4] p-3">
+            <HiArrowSmallRight
+              onClick={() => scrollRight(salesScrollRef)}
+              className="w-[30px] h-[30px] cursor-pointer"
+            />
+          </div>
+        </div>
+
+        {/* Recent Transactions */}
+        <div className="h-[117px] mt-12">
+          <div className="flex flex-row items-center justify-between h-[117px]">
+            <h2 className="text-[52px] font-medium">Recent Transactions</h2>
+          </div>
+          <h4 className="text-[19px]">Updated 20 seconds ago</h4>
+        </div>
+
+        <div className="mt-[53px] flex flex-row gap-6 overflow-x-auto scroll-smooth">
+          <div
+            ref={txScrollRef}
+            className="flex gap-6 overflow-x-hidden scroll-smooth"
+            style={{ width: "100%" }}
+          >
+            {isTxLoading
+              ? Array.from({ length: 3 }).map((_, i) => <SkeletonSaleCard key={i} />)
+              : txData?.asset_events?.map((event, i) => (
+                  <div
+                    key={`${event.transaction}-${i}`}
+                    className="bg-white rounded-2xl flex-shrink-0 w-[360px]"
+                  >
+                    <img
+                      src={event.nft?.image_url || event.asset?.image_url}
+                      alt="NFT"
+                      className="w-full h-[360px] object-cover rounded-2xl"
+                    />
+                    <div className="p-4 text-black">
+                      <h3 className="font-medium text-lg">
+                        {event.nft?.name || event.asset?.name}
+                      </h3>
+                      <span className="font-medium">
+                        Tx on{" "}
+                        {new Date(
+                          event.nft?.updated_at || event.asset?.updated_at
+                        ).toLocaleDateString()}
+                      </span>
                     </div>
+                  </div>
+                ))}
+          </div>
+        </div>
 
-                    <div className="flex flex-col w-100 h-143 gap-[27px]">
-                        <Image
-                            src="/collections/Image (2).svg"
-                            alt="collections"
-                            width={360}
-                            height={360}
-                        />
-                        <div className="w-[420px] h-[70px]">
-                            <h3 className="font-medium text-[26px]">#3704</h3>
-                            <span className="font-medium text-[20px]">4.2KΞ ($17.58M)</span>
-                        </div>
-                        <h5 className="font-medium text-[17px]">Dec 07, 2021</h5>
-                    </div>
-
-                </div>
-                <div className="flex flex-row items-center gap-2.5">
-                    <div className="w-[65px] h-[65px] rounded-[100px] border border-[#aab4b4] p-5">
-                        <HiArrowSmallLeft className="w-[24px] h-[24px]" />
-                    </div>
-
-                    <div className="w-[65px] h-[65px] rounded-[100px] border border-[#aab4b4] p-5">
-                        <HiArrowSmallRight className="w-[24px] h-[24px] " />
-                    </div>
-                </div>
-            </div>
-
-
-
-
-            <div className="h-[117px] gap-[19px]">
-                <div className="flex flex-row items-center justify-between h-[117px]">
-                    <h2 className="text-[52px] font-medium">Recent Transcations</h2>
-                    <div className="h-[61px] w-[149px] rounded-[100px] border pr-9 pl-10 pt-3.5 pb-4 border-[#b2b9b9] cursor-pointer">
-                        <button className="text-[20px] font-medium cursor-pointer">View all</button>
-                    </div>
-                </div>
-                <h4 className="text-[19px]">
-                    Updated 20 seconds ago
-                </h4>
-            </div>
-
-
-            <div className="mt-[93px] h-173 flex flex-col overflow-x-scroll">
-                <div className="flex flex-row">
-                    <div className="flex flex-col w-100 h-143 gap-[27px]">
-                        <Image
-                            src="/collections/Image 1.svg"
-                            alt="collections"
-                            width={360}
-                            height={360}
-                        />
-                        <div className="w-[420px] h-[70px]">
-                            <h3 className="font-medium text-[26px]">#1254</h3>
-                            <span className="font-medium text-[20px]">New bid of 5120Ξ ($213,879)</span>
-                        </div>
-
-                    </div>
-
-                    <div className="flex flex-col w-100 h-143 gap-[27px]">
-                        <Image
-                            src="/collections/Frame 2.svg"
-                            alt="collections"
-                            width={360}
-                            height={360}
-                        />
-                        <div className="w-[420px] h-[70px]">
-                            <h3 className="font-medium text-[26px]">#9140</h3>
-                            <span className="font-medium text-[20px]"> New bid of 5120Ξ ($213,879)</span>
-                        </div>
-
-                    </div>
-
-                    <div className="flex flex-col w-100 h-143 gap-[27px]">
-                        <Image
-                            src="/collections/Frame 3.svg"
-                            alt="collections"
-                            width={360}
-                            height={360}
-                        />
-                        <div className="w-[420px] h-[70px]">
-                            <h3 className="font-medium text-[26px]">#4125</h3>
-                            <span className="font-medium text-[20px]">Offered for 111Ξ ($453,049)</span>
-                        </div>
-                    </div>
-
-                </div>
-                <div className="flex flex-row items-center gap-2.5">
-                    <div className="w-[65px] h-[65px] rounded-[100px] border border-[#aab4b4] p-5">
-                        <HiArrowSmallLeft className="w-[24px] h-[24px]" />
-                    </div>
-
-                    <div className="w-[65px] h-[65px] rounded-[100px] border border-[#aab4b4] p-5">
-                        <HiArrowSmallRight className="w-[24px] h-[24px] " />
-                    </div>
-                </div>
-
-               
-            </div>
-            </div>
-
-   <Punk/>
-
-        </section>
-    )
+        <div className="flex flex-row items-center gap-2.5 mt-4">
+          <div className="w-[55px] h-[55px] rounded-full border border-[#aab4b4] p-3">
+            <HiArrowSmallLeft
+              onClick={() => scrollLeft(txScrollRef)}
+              className="w-[30px] h-[30px] cursor-pointer"
+            />
+          </div>
+          <div className="w-[55px] h-[55px] rounded-full border border-[#aab4b4] p-3">
+            <HiArrowSmallRight
+              onClick={() => scrollRight(txScrollRef)}
+              className="w-[30px] h-[30px] cursor-pointer"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+  )
 }

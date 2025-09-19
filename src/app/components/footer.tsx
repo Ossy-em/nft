@@ -1,6 +1,14 @@
+"use client"
 import { FaTwitter, FaDiscord } from "react-icons/fa";
+import  { useRouter } from "next/navigation";
 
 export default function Footer() {
+
+  const router = useRouter()
+
+  const handleCollection = ()=>{
+    router.push("/collections")
+  }
   return (
     <footer className="bg-black text-white px-10 py-8 w-screen">
 
@@ -13,9 +21,9 @@ export default function Footer() {
           <a href="#" className="hover:text-gray-400 hover:underline">
             Buy a Punk
           </a>
-          <a href="#" className="hover:text-gray-400 hover:underline">
+          <h5 onClick={handleCollection}  className="hover:text-gray-400 hover:underline cursor-pointer">
             View Full Collection
-          </a>
+          </h5>
         </nav>
 
         <div className="flex gap-4">

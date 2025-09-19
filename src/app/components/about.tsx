@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import Image from "next/image"
 import { MdArrowOutward } from "react-icons/md";
 import { useRouter } from "next/navigation";
+import SkeletonArticleCard from "@/components/SkeletonArticleCard"
 
 
 export default function About() {
@@ -30,15 +31,9 @@ export default function About() {
         queryKey: ['article'], queryFn: async () => { const res = await fetch('https://dev.to/api/articles?per_page=5'); return res.json() },
     });
 
-
-    if (isLoading) {
-        return (
-            <div className="flex items-center justify-center h-64">
-                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-white"></div>
-                <span className="ml-3 text-white text-lg font-medium">Loading...</span>
-            </div>
-        );
-    }
+// if(isLoading) return  Array.from({ length: 3 }).map((_, i) => (
+//           <SkeletonArticleCard key={i} />
+// ))
 
 
     return (
@@ -53,51 +48,38 @@ export default function About() {
                         </button>
                     </div>
                 </div>
-                <div className="flex flex-row w-screen overflow-x-scroll gap-[18px] mb-4 mt-24 py-9">
+<div className="w-screen overflow-hidden mb-4 mt-24 py-9">
+  <div className="scroll-container">
+    <Image src="/about/Image (7).svg" alt="image" width={187} height={187} />
+    <Image src="/about/Image.svg" alt="image" width={187} height={187} />
+    <Image src="/about/Image (2).svg" alt="image" width={187} height={187} />
+    <Image src="/about/Image (3).svg" alt="image" width={187} height={187} />
+    <Image src="/about/Image (4).svg" alt="image" width={187} height={187} />
+    <Image src="/about/Image (5).svg" alt="image" width={187} height={187} />
+    <Image src="/about/Image (6).svg" alt="image" width={187} height={187} />
 
-                    <Image
-                        src="/about/Image (7).svg"
-                        alt="image"
-                        width={187}
-                        height={187} />
-                    <Image
-                        src="/about/Image.svg"
-                        alt="image"
-                        width={187}
-                        height={187} /> <Image
-                        src="/about/Image (2).svg"
-                        alt="image"
-                        width={187}
-                        height={187} /> <Image
-                        src="/about/Image (3).svg"
-                        alt="image"
-                        width={187}
-                        height={187} /> <Image
-                        src="/about/Image (4).svg"
-                        alt="image"
-                        width={187}
-                        height={187} /> <Image
-                        src="/about/Image (5).svg"
-                        alt="image"
-                        width={187}
-                        height={187} /> <Image
-                        src="/about/Image (6).svg"
-                        alt="image"
-                        width={187}
-                        height={187} />
-                </div>
-
+    <Image src="/about/Image (7).svg" alt="image" width={187} height={187} />
+    <Image src="/about/Image.svg" alt="image" width={187} height={187} />
+    <Image src="/about/Image (2).svg" alt="image" width={187} height={187} />
+    <Image src="/about/Image (3).svg" alt="image" width={187} height={187} />
+    <Image src="/about/Image (4).svg" alt="image" width={187} height={187} />
+    <Image src="/about/Image (5).svg" alt="image" width={187} height={187} />
+    <Image src="/about/Image (6).svg" alt="image" width={187} height={187} />
+  </div>
+</div>
             </div>
 
 
             <div className="w-[1301px] h-[691px] flex flex-col items-center">
 
-                <h1 className="mt-[100px] h-10 font-medium text-4xl">Featured in</h1>
+                <h1 className="mt-[150px] h-10 font-medium text-4xl">Featured in</h1>
 
-                <div className="flex grid-rows-3 w-[1301px] h-[316px] mt-[74px] items-center gap-3 px-[40px]">
+                <div className="flex grid-rows-3 w-[1301px] h-[316px] mt-[4px] items-center gap-3 px-[40px]">
 
 
-                    {data?.slice(0, 3).map((article) => (
+              {isLoading
+    ? Array.from({ length: 3 }).map((_, i) => <SkeletonArticleCard key={i} />)
+    : data?.slice(0, 3).map((article) => (
                         <div key={article.id} className="flex flex-col w-[390px] h-[306px] border-1 border-[#565656] rounded-3xl ">
                             <div className="flex flex-col gap-4 px-4 pb-[51px] border-b-2 border-[#565656]">
                                 <Image
