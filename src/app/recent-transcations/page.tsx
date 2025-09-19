@@ -1,8 +1,7 @@
 "use client"
 import { useQuery } from "@tanstack/react-query"
 
-
-export default function recentTransaction() {
+export default function RecentTransaction() {
 
     const { data: recent, isError, isLoading } = useQuery({
         queryKey: ['recent'],
@@ -24,24 +23,23 @@ export default function recentTransaction() {
             return res.json()
         },
     })
-if (isLoading) {
-  return (
-    <div className="grid grid-cols-3 bg-black text-white min-h-screen p-10 gap-10 overflow-x-hidden">
-      {Array.from({ length: 9 }).map((_, index) => (
-        <SkeletonSaleCard key={index} />
-      ))}
-    </div>
-  )
-}
 
-    if (isError) return <p>Error fetching sales</p>
+    if (isLoading) {
+        return (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 bg-black text-white min-h-screen p-4 sm:p-6 lg:p-10 gap-4 sm:gap-6 lg:gap-10 overflow-x-hidden">
+                {Array.from({ length: 9 }).map((_, index) => (
+                    <SkeletonSaleCard key={index} />
+                ))}
+            </div>
+        )
+    }
 
+    if (isError) return <p className="text-white text-center p-4">Error fetching sales</p>
 
     const ethPrice = ethPriceData?.ethereum?.usd || 0
 
     return (
-
-        <div className="grid grid-cols-3 bg-black text-white min-h-screen p-10 gap-10 overflow-x-hidden">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 bg-black text-white min-h-screen p-4 sm:p-6 lg:p-10 gap-4 sm:gap-6 lg:gap-10 overflow-x-hidden">
             {recent?.asset_events
                 ?.filter((event) => event.nft?.image_url || event.asset?.image_url)
                 ?.sort((a, b) => {
@@ -53,45 +51,40 @@ if (isLoading) {
                     const image = event.nft?.image_url || event.asset?.image_url
                     const name = event.nft?.name || event.asset?.name
                     const updated_at = event.nft?.updated_at || event.asset?.updated_at
-
-
                     const ethAmount = Number(event.payment.quantity) / 10 ** event.payment.decimals
                     const usdValue = ethAmount * ethPrice
 
                     return (
                         <div
                             key={`${event.transaction}-${index}`}
-                            className="bg-[#111] rounded-2xl hover:scale-105 hover:shadow-lg transition-all duration-300"
+                            className="bg-[#111] rounded-2xl hover:scale-105 hover:shadow-lg transition-all duration-300 w-full max-w-[400px] mx-auto"
                         >
-
                             {image && (
                                 <img
                                     src={image}
                                     alt={name || 'NFT'}
-                                    width={360}
-                                    height={360}
-                                    className="rounded-2xl"
+                                    className="w-full h-48 sm:h-60 lg:h-80 object-cover rounded-t-2xl"
                                 />
                             )}
 
+                            <div className="p-3 sm:p-4">
+                                <div className="mb-2 sm:mb-3">
+                                    <h3 className="font-medium text-lg sm:text-xl lg:text-2xl truncate">
+                                        #{event.nft?.identifier || 'N/A'}
+                                    </h3>
+                                    <span className="font-medium text-sm sm:text-base lg:text-lg block leading-relaxed">
+                                        New bid of {ethAmount.toFixed(2)}Ξ (${usdValue.toLocaleString()})
+                                    </span>
+                                </div>
 
-                            <div className="w-[420px] h-[70px]">
-                                <h3 className="font-medium text-[26px]">
-                                    #{event.nft.identifier}
-                                </h3>
-                                <span className="font-medium text-[20px]">
-                                    New bid of      {ethAmount.toFixed(2)}Ξ (${usdValue.toLocaleString()})
-                                </span>
+                                <h5 className="font-medium text-xs sm:text-sm lg:text-base text-gray-400">
+                                    {new Date(updated_at).toLocaleDateString('en-US', {
+                                        year: 'numeric',
+                                        month: 'short',
+                                        day: 'numeric',
+                                    })}
+                                </h5>
                             </div>
-
-
-                            <h5 className="font-medium text-[17px]">
-                                {new Date(updated_at).toLocaleDateString('en-US', {
-                                    year: 'numeric',
-                                    month: 'short',
-                                    day: 'numeric',
-                                })}
-                            </h5>
                         </div>
                     )
                 })}
@@ -100,18 +93,15 @@ if (isLoading) {
 }
 
 const SkeletonSaleCard = () => {
-  return (
-    <div className="bg-[#111] rounded-2xl animate-pulse">
-
-      <div className="w-full h-64 bg-gray-800 rounded-2xl"></div>
-      
-    
-      <div className="w-[420px] h-[70px] p-4 space-y-2">
-        <div className="h-6 w-1/3 bg-gray-700 rounded"></div> 
-        <div className="h-5 w-2/3 bg-gray-700 rounded"></div> 
-      </div>
-
-      <div className="h-5 w-1/2 bg-gray-700 rounded mx-4 mb-4"></div> 
-    </div>
-  )
+    return (
+        <div className="bg-[#111] rounded-2xl animate-pulse w-full max-w-[400px] mx-auto">
+            <div className="w-full h-48 sm:h-60 lg:h-80 bg-gray-800 rounded-t-2xl"></div>
+            
+            <div className="p-3 sm:p-4 space-y-2 sm:space-y-3">
+                <div className="h-5 sm:h-6 lg:h-7 w-1/3 bg-gray-700 rounded"></div>
+                <div className="h-4 sm:h-5 lg:h-6 w-3/4 bg-gray-700 rounded"></div>
+                <div className="h-3 sm:h-4 lg:h-5 w-1/2 bg-gray-700 rounded"></div>
+            </div>
+        </div>
+    )
 }

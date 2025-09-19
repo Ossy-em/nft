@@ -2,13 +2,12 @@
 import React, { useRef } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { HiArrowSmallRight, HiArrowSmallLeft } from "react-icons/hi2"
-import SkeletonSaleCard from "@/components/SkeletonSaleCard"
+import { useRouter } from "next/navigation"
 
 export default function Collections() {
   const salesScrollRef = useRef<HTMLDivElement>(null)
   const txScrollRef = useRef<HTMLDivElement>(null)
 
-  // Fetch largest sales
   const { data: salesData, isLoading: isSalesLoading } = useQuery({
     queryKey: ["largestSales"],
     queryFn: async () => {
@@ -20,7 +19,7 @@ export default function Collections() {
     },
   })
 
-  // Fetch recent transactions
+
   const { data: txData, isLoading: isTxLoading } = useQuery({
     queryKey: ["recentTransactions"],
     queryFn: async () => {
@@ -32,9 +31,9 @@ export default function Collections() {
     },
   })
 
-  const scrollAmount = 384
+  const scrollAmount = 300
 
-  // Scroll helpers
+
   const scrollLeft = (ref: React.RefObject<HTMLDivElement>) => {
     ref.current?.scrollBy({ left: -scrollAmount, behavior: "smooth" })
   }
@@ -42,38 +41,49 @@ export default function Collections() {
     ref.current?.scrollBy({ left: scrollAmount, behavior: "smooth" })
   }
 
-  return (
-    <section className="bg-white pt-[163px] py-16 w-screen mb-0 overflow-hidden">
-      <div className="px-10">
+  const router = useRouter()
 
-        {/* Largest Sales */}
-        <div className="flex flex-row items-center justify-between h-[67px]">
-          <h2 className="text-[52px] font-medium">Largest Sales</h2>
+  const handleMore =()=>{
+    router.push("/recent-transcations")
+  }
+
+  const handleSeeMoreLargestSales=()=>{
+      router.push("/largest-sales")
+  }
+  return (
+    <section className="bg-white pt-20 sm:pt-32 lg:pt-[163px] py-8 sm:py-12 lg:py-16 w-full mb-0 overflow-hidden">
+      <div className="px-4 sm:px-6 lg:px-10">
+
+
+        <div className="flex flex-row items-center justify-between mb-6 sm:mb-8 lg:mb-[53px]">
+          <h2 className="text-2xl sm:text-3xl lg:text-[52px] font-medium">Largest Sales</h2>
+          <button onClick={handleSeeMoreLargestSales} className="px-4 py-2 sm:px-6 sm:py-3 bg-black text-white rounded-full font-medium text-sm sm:text-base hover:bg-gray-800 transition-colors duration-200">
+            Show More
+          </button>
         </div>
 
-        <div className="mt-[53px] flex flex-col">
+        <div className="flex flex-col">
           <div
             ref={salesScrollRef}
-            className="flex gap-6 overflow-x-hidden scroll-smooth"
-            style={{ width: "100%" }}
+            className="flex gap-3 sm:gap-4 lg:gap-6 overflow-x-hidden scroll-smooth pb-2"
           >
             {isSalesLoading
               ? Array.from({ length: 3 }).map((_, i) => <SkeletonSaleCard key={i} />)
               : salesData?.asset_events?.map((event, i) => (
                   <div
                     key={`${event.transaction}-${i}`}
-                    className="bg-white rounded-2xl flex-shrink-0 w-[360px]"
+                    className="bg-white rounded-2xl flex-shrink-0 w-64 sm:w-80 lg:w-[360px] shadow-md"
                   >
                     <img
                       src={event.nft?.image_url || event.asset?.image_url}
                       alt="NFT"
-                      className="w-full h-[360px] object-cover rounded-2xl"
+                      className="w-full h-64 sm:h-80 lg:h-[360px] object-cover rounded-t-2xl"
                     />
-                    <div className="p-4 text-black">
-                      <h3 className="font-medium text-lg">
-                        {event.nft?.name || event.asset?.name}
+                    <div className="p-3 sm:p-4 text-black">
+                      <h3 className="font-medium text-sm sm:text-base lg:text-lg truncate">
+                        {event.nft?.name || event.asset?.name || `#${event.nft?.identifier}`}
                       </h3>
-                      <span className="font-medium">
+                      <span className="font-medium text-sm sm:text-base">
                         {(Number(event.payment.quantity) /
                           10 ** event.payment.decimals).toFixed(2)} Ξ
                       </span>
@@ -83,52 +93,55 @@ export default function Collections() {
           </div>
         </div>
 
-        <div className="flex flex-row items-center gap-2.5 mt-4">
-          <div className="w-[55px] h-[55px] rounded-full border border-[#aab4b4] p-3">
+        <div className="flex flex-row items-center gap-2 sm:gap-2.5 mt-3 sm:mt-4">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 lg:w-[55px] lg:h-[55px] rounded-full border border-[#aab4b4] p-2 sm:p-2.5 lg:p-3">
             <HiArrowSmallLeft
               onClick={() => scrollLeft(salesScrollRef)}
-              className="w-[30px] h-[30px] cursor-pointer"
+              className="w-full h-full cursor-pointer hover:text-gray-600 transition-colors"
             />
           </div>
-          <div className="w-[55px] h-[55px] rounded-full border border-[#aab4b4] p-3">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 lg:w-[55px] lg:h-[55px] rounded-full border border-[#aab4b4] p-2 sm:p-2.5 lg:p-3">
             <HiArrowSmallRight
               onClick={() => scrollRight(salesScrollRef)}
-              className="w-[30px] h-[30px] cursor-pointer"
+              className="w-full h-full cursor-pointer hover:text-gray-600 transition-colors"
             />
           </div>
         </div>
 
-        {/* Recent Transactions */}
-        <div className="h-[117px] mt-12">
-          <div className="flex flex-row items-center justify-between h-[117px]">
-            <h2 className="text-[52px] font-medium">Recent Transactions</h2>
+        <div className="mt-12 sm:mt-16 lg:mt-20">
+          <div className="flex flex-row items-center justify-between mb-4 sm:mb-6">
+            <div>
+              <h2 className="text-2xl sm:text-3xl lg:text-[52px] font-medium">Recent Transactions</h2>
+              <h4 className="text-sm sm:text-base lg:text-[19px] text-gray-600 mt-1 sm:mt-2">Updated 20 seconds ago</h4>
+            </div>
+            <button onClick={handleMore} className="px-4 py-2 sm:px-6 sm:py-3 bg-black text-white rounded-full font-medium text-sm sm:text-base hover:bg-gray-800 transition-colors duration-200">
+              Show More
+            </button>
           </div>
-          <h4 className="text-[19px]">Updated 20 seconds ago</h4>
         </div>
 
-        <div className="mt-[53px] flex flex-row gap-6 overflow-x-auto scroll-smooth">
+        <div className="mt-6 sm:mt-8 lg:mt-[53px] flex flex-col">
           <div
             ref={txScrollRef}
-            className="flex gap-6 overflow-x-hidden scroll-smooth"
-            style={{ width: "100%" }}
+            className="flex gap-3 sm:gap-4 lg:gap-6 overflow-x-hidden scroll-smooth pb-2"
           >
             {isTxLoading
               ? Array.from({ length: 3 }).map((_, i) => <SkeletonSaleCard key={i} />)
               : txData?.asset_events?.map((event, i) => (
                   <div
                     key={`${event.transaction}-${i}`}
-                    className="bg-white rounded-2xl flex-shrink-0 w-[360px]"
+                    className="bg-white rounded-2xl flex-shrink-0 w-64 sm:w-80 lg:w-[360px] shadow-md"
                   >
                     <img
                       src={event.nft?.image_url || event.asset?.image_url}
                       alt="NFT"
-                      className="w-full h-[360px] object-cover rounded-2xl"
+                      className="w-full h-64 sm:h-80 lg:h-[360px] object-cover rounded-t-2xl"
                     />
-                    <div className="p-4 text-black">
-                      <h3 className="font-medium text-lg">
-                        {event.nft?.name || event.asset?.name}
+                    <div className="p-3 sm:p-4 text-black">
+                      <h3 className="font-medium text-sm sm:text-base lg:text-lg truncate">
+                        {event.nft?.name || event.asset?.name || `#${event.nft?.identifier}`}
                       </h3>
-                      <span className="font-medium">
+                      <span className="font-medium text-sm sm:text-base">
                         Tx on{" "}
                         {new Date(
                           event.nft?.updated_at || event.asset?.updated_at
@@ -140,21 +153,33 @@ export default function Collections() {
           </div>
         </div>
 
-        <div className="flex flex-row items-center gap-2.5 mt-4">
-          <div className="w-[55px] h-[55px] rounded-full border border-[#aab4b4] p-3">
+        <div className="flex flex-row items-center gap-2 sm:gap-2.5 mt-3 sm:mt-4">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 lg:w-[55px] lg:h-[55px] rounded-full border border-[#aab4b4] p-2 sm:p-2.5 lg:p-3">
             <HiArrowSmallLeft
               onClick={() => scrollLeft(txScrollRef)}
-              className="w-[30px] h-[30px] cursor-pointer"
+              className="w-full h-full cursor-pointer hover:text-gray-600 transition-colors"
             />
           </div>
-          <div className="w-[55px] h-[55px] rounded-full border border-[#aab4b4] p-3">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 lg:w-[55px] lg:h-[55px] rounded-full border border-[#aab4b4] p-2 sm:p-2.5 lg:p-3">
             <HiArrowSmallRight
               onClick={() => scrollRight(txScrollRef)}
-              className="w-[30px] h-[30px] cursor-pointer"
+              className="w-full h-full cursor-pointer hover:text-gray-600 transition-colors"
             />
           </div>
         </div>
       </div>
     </section>
+  )
+}
+
+const SkeletonSaleCard = () => {
+  return (
+    <div className="bg-white rounded-2xl flex-shrink-0 w-64 sm:w-80 lg:w-[360px] animate-pulse shadow-md">
+      <div className="w-full h-64 sm:h-80 lg:h-[360px] bg-gray-300 rounded-t-2xl"></div>
+      <div className="p-3 sm:p-4 text-black space-y-2 sm:space-y-3">
+        <div className="w-2/3 h-4 sm:h-5 bg-gray-300 rounded"></div>
+        <div className="w-1/2 h-3 sm:h-4 bg-gray-300 rounded"></div>
+      </div>
+    </div>
   )
 }
