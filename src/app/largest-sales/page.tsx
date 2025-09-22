@@ -4,19 +4,27 @@ import { useQuery } from '@tanstack/react-query'
 
 export default function LargestSales() {
 
-  const { data: salesData, isError, isLoading } = useQuery({
-    queryKey: ['sales'],
-    queryFn: async () => {
-      const res = await fetch(
-        'https://api.opensea.io/api/v2/events/collection/cryptopunks?event_type=sale&limit=42',
-        {
-          headers: { 'X-API-KEY': process.env.NEXT_PUBLIC_OPENSEA_API_KEY || '' },
-        }
-      )
-      return res.json()
-    },
-  })
-  console.log(salesData)
+const { data: salesData, isLoading, isError } = useQuery({
+  queryKey: ["sales"],
+  queryFn: async () => {
+    console.log(" Fetching /api/opensea-sales");
+
+    const res = await fetch("/api/opensea-sales");
+
+    if (!res.ok) {
+      const errorText = await res.text();
+      console.error(" Failed to fetch sales data:", res.status, res.statusText, errorText);
+      throw new Error(`Failed to fetch sales data: ${res.status} ${res.statusText}`);
+    }
+
+    const json = await res.json();
+    console.log("✅ Data received:", json);
+    return json;
+  },
+  staleTime: 1000 * 60, 
+  retry: 2,             
+});
+
 
   const { data: ethPriceData } = useQuery({
     queryKey: ['ethPrice'],
@@ -45,13 +53,13 @@ export default function LargestSales() {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 bg-black text-white min-h-screen p-4 sm:p-6 lg:p-10 gap-4 sm:gap-6 lg:gap-10 overflow-x-hidden">
       {salesData?.asset_events
-        ?.filter((event) => event.nft?.image_url || event.asset?.image_url)
-        ?.sort((a, b) => {
+        ?.filter((event: any) => event.nft?.image_url || event.asset?.image_url)
+        ?.sort((a: any, b: any) => {
           const priceA = Number(a.payment.quantity) / 10 ** a.payment.decimals
           const priceB = Number(b.payment.quantity) / 10 ** b.payment.decimals
-          return priceB - priceA 
+          return priceB - priceA
         })
-        .map((event, index) => {
+        .map((event: any, index: any) => {
           const image = event.nft?.image_url || event.asset?.image_url
           const name = event.nft?.name || event.asset?.name
           const updated_at = event.nft?.updated_at || event.asset?.updated_at
@@ -99,14 +107,13 @@ export default function LargestSales() {
 const SkeletonSaleCard = () => {
   return (
     <div className="bg-[#111] rounded-2xl animate-pulse w-full max-w-[400px] mx-auto">
-      {/* Image placeholder */}
+
       <div className="w-full h-48 sm:h-60 lg:h-80 bg-gray-800 rounded-t-2xl"></div>
-      
-      {/* Text placeholders */}
+
       <div className="p-3 sm:p-4 space-y-2 sm:space-y-3">
-        <div className="h-5 sm:h-6 lg:h-7 w-1/3 bg-gray-700 rounded"></div> {/* Token # */}
-        <div className="h-4 sm:h-5 lg:h-6 w-2/3 bg-gray-700 rounded"></div> {/* ETH + USD */}
-        <div className="h-3 sm:h-4 lg:h-5 w-1/2 bg-gray-700 rounded"></div> {/* Date */}
+        <div className="h-5 sm:h-6 lg:h-7 w-1/3 bg-gray-700 rounded"></div>
+        <div className="h-4 sm:h-5 lg:h-6 w-2/3 bg-gray-700 rounded"></div>
+        <div className="h-3 sm:h-4 lg:h-5 w-1/2 bg-gray-700 rounded"></div>
       </div>
     </div>
   )

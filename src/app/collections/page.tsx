@@ -7,14 +7,18 @@ const Collections = () => {
   const { data, isError, isLoading } = useQuery({
     queryKey: ['collection'],
     queryFn: async () => {
+       const headers: HeadersInit = {}
+      if (process.env.NEXT_PUBLIC_OPENSEA_API_KEY) {
+        headers['X-API-KEY'] = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
+      }
       const res = await fetch('https://api.opensea.io/api/v2/collection/cryptopunks/nfts', {
-        headers: {
-          'X-API-KEY': process.env.NEXT_PUBLIC_OPENSEA_API_KEY
-        }
+        headers
       })
       return res.json()
     }
   })
+  console.log("OpenSea API Key:", process.env.NEXT_PUBLIC_OPENSEA_API_KEY)
+
 
 if (isLoading) {
 
@@ -31,7 +35,12 @@ if (isLoading) {
 
   return (
    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 p-6 bg-black text-white">
-  {data?.nfts?.map((nft) => (
+  {data?.nfts?.map((nft:{ 
+  identifier: string; 
+  image_url?: string; 
+  name?: string; 
+  collection?: { name?: string } 
+}) => (
     <div
       key={nft.identifier}
       className="bg-[#111] rounded-2xl overflow-hidden shadow-md hover:scale-105 hover:shadow-lg transition-all duration-300"

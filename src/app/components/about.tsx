@@ -8,6 +8,11 @@ import { useRouter } from "next/navigation";
 import SkeletonArticleCard from "@/components/SkeletonArticleCard"
 
 export default function About() {
+    interface Article {
+  id: number;
+  title: string;
+  url: string;
+}
     const [isConnected, setIsConnected] = useState(false);
     const [mintedCount, setMintedCount] = useState(0)
 
@@ -25,7 +30,7 @@ export default function About() {
         router.push("/collections");
     };
 
-    const { data, isLoading, isError } = useQuery({
+    const { data, isLoading, isError } = useQuery<Article[]>({
         queryKey: ['article'], queryFn: async () => { const res = await fetch('https://dev.to/api/articles?per_page=5'); return res.json() },
     });
 

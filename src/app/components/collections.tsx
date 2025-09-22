@@ -8,12 +8,16 @@ export default function Collections() {
   const salesScrollRef = useRef<HTMLDivElement>(null)
   const txScrollRef = useRef<HTMLDivElement>(null)
 
-  const { data: salesData, isLoading: isSalesLoading } = useQuery({
+  const { data: salesData, isLoading: isSalesLoading } = useQuery<any>({
     queryKey: ["largestSales"],
     queryFn: async () => {
+       const headers: HeadersInit = {}
+      if (process.env.NEXT_PUBLIC_OPENSEA_API_KEY) {
+        headers['X-API-KEY'] = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
+      }
       const res = await fetch(
         "https://api.opensea.io/api/v2/events/collection/cryptopunks?event_type=sale&limit=42",
-        { headers: { "X-API-KEY": process.env.NEXT_PUBLIC_OPENSEA_API_KEY || "" } }
+        { headers}
       )
       return res.json()
     },
@@ -23,9 +27,13 @@ export default function Collections() {
   const { data: txData, isLoading: isTxLoading } = useQuery({
     queryKey: ["recentTransactions"],
     queryFn: async () => {
+       const headers: HeadersInit = {}
+      if (process.env.NEXT_PUBLIC_OPENSEA_API_KEY) {
+        headers['X-API-KEY'] = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
+      }
       const res = await fetch(
         "https://api.opensea.io/api/v2/events/collection/cryptopunks?event_type=transfer&limit=42",
-        { headers: { "X-API-KEY": process.env.NEXT_PUBLIC_OPENSEA_API_KEY || "" } }
+        { headers }
       )
       return res.json()
     },
@@ -34,12 +42,14 @@ export default function Collections() {
   const scrollAmount = 300
 
 
-  const scrollLeft = (ref: React.RefObject<HTMLDivElement>) => {
-    ref.current?.scrollBy({ left: -scrollAmount, behavior: "smooth" })
-  }
-  const scrollRight = (ref: React.RefObject<HTMLDivElement>) => {
-    ref.current?.scrollBy({ left: scrollAmount, behavior: "smooth" })
-  }
+const scrollLeft = (ref: React.RefObject<HTMLDivElement | null>) => {
+  ref.current?.scrollBy({ left: -300, behavior: "smooth" })
+}
+
+const scrollRight = (ref: React.RefObject<HTMLDivElement | null>) => {
+  ref.current?.scrollBy({ left: 300, behavior: "smooth" })
+}
+
 
   const router = useRouter()
 
@@ -69,7 +79,7 @@ export default function Collections() {
           >
             {isSalesLoading
               ? Array.from({ length: 3 }).map((_, i) => <SkeletonSaleCard key={i} />)
-              : salesData?.asset_events?.map((event, i) => (
+              : salesData?.asset_events?.map((event:any, i:any) => (
                   <div
                     key={`${event.transaction}-${i}`}
                     className="bg-white rounded-2xl flex-shrink-0 w-64 sm:w-80 lg:w-[360px] shadow-md"
@@ -96,13 +106,13 @@ export default function Collections() {
         <div className="flex flex-row items-center gap-2 sm:gap-2.5 mt-3 sm:mt-4">
           <div className="w-10 h-10 sm:w-12 sm:h-12 lg:w-[55px] lg:h-[55px] rounded-full border border-[#aab4b4] p-2 sm:p-2.5 lg:p-3">
             <HiArrowSmallLeft
-              onClick={() => scrollLeft(salesScrollRef)}
+              onClick={() => scrollLeft(salesScrollRef!)}
               className="w-full h-full cursor-pointer hover:text-gray-600 transition-colors"
             />
           </div>
           <div className="w-10 h-10 sm:w-12 sm:h-12 lg:w-[55px] lg:h-[55px] rounded-full border border-[#aab4b4] p-2 sm:p-2.5 lg:p-3">
             <HiArrowSmallRight
-              onClick={() => scrollRight(salesScrollRef)}
+              onClick={() => scrollRight(salesScrollRef!)}
               className="w-full h-full cursor-pointer hover:text-gray-600 transition-colors"
             />
           </div>
@@ -127,7 +137,7 @@ export default function Collections() {
           >
             {isTxLoading
               ? Array.from({ length: 3 }).map((_, i) => <SkeletonSaleCard key={i} />)
-              : txData?.asset_events?.map((event, i) => (
+              : txData?.asset_events?.map((event:any, i:any) => (
                   <div
                     key={`${event.transaction}-${i}`}
                     className="bg-white rounded-2xl flex-shrink-0 w-64 sm:w-80 lg:w-[360px] shadow-md"

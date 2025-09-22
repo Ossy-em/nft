@@ -38,7 +38,7 @@ export function useOpenseaEvents(
   return useQuery({
     queryKey: ["opensea-events", collectionSlug, chain, limit],
     queryFn: () => fetchOpenseaEvents({ chain, collectionSlug, limit }),
-    enabled: !!collectionSlug, // only fetch if slug exists
-    refetchInterval: 30000, // auto refresh every 30s (optional)
+    enabled: !!collectionSlug,
+    refetchInterval: 30000, 
   });
 }
