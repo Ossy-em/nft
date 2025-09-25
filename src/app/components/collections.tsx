@@ -34,7 +34,7 @@ export default function Collections() {
   const { data: txData, isLoading: isTxLoading } = useQuery({
     queryKey: ["recentTransactions"],
     queryFn: async () => {
-      const res = await fetch("/api/opensea-transactions") // create this route just like opensea-sales
+      const res = await fetch("/api/opensea-sales") // create this route just like opensea-sales
       if (!res.ok) throw new Error("Failed to fetch tx data")
       return res.json()
     },
