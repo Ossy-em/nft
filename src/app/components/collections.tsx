@@ -66,7 +66,7 @@ const scrollRight = (ref: React.RefObject<HTMLDivElement | null>) => {
 
 
         <div className="flex flex-row items-center justify-between mb-6 sm:mb-8 lg:mb-[53px]">
-          <h2 className="text-2xl sm:text-3xl lg:text-[52px] font-medium">Largest Sales</h2>
+          <h2 className="text-2xl sm:text-3xl lg:text-[52px] font-medium">Largest Salessss</h2>
           <button onClick={handleSeeMoreLargestSales} className="px-4 py-2 sm:px-6 sm:py-3 bg-black text-white rounded-full font-medium text-sm sm:text-base hover:bg-gray-800 transition-colors duration-200">
             Show More
           </button>
