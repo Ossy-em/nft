@@ -7,67 +7,68 @@ import { useRouter } from "next/navigation"
 export default function Collections() {
   const salesScrollRef = useRef<HTMLDivElement>(null)
   const txScrollRef = useRef<HTMLDivElement>(null)
+  const router = useRouter()
 
-  const { data: salesData, isLoading: isSalesLoading } = useQuery<any>({
-    queryKey: ["largestSales"],
+  // ✅ FIX 1: alias isLoading → isSalesLoading
+  const { data: salesData, isLoading: isSalesLoading, isError } = useQuery({
+    queryKey: ["sales"],
     queryFn: async () => {
-       const headers: HeadersInit = {}
-      if (process.env.NEXT_PUBLIC_OPENSEA_API_KEY) {
-        headers['X-API-KEY'] = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
+      console.log(" Fetching /api/opensea-sales")
+
+      const res = await fetch("/api/opensea-sales")
+      if (!res.ok) {
+        const errorText = await res.text()
+        console.error(" Failed to fetch sales data:", res.status, res.statusText, errorText)
+        throw new Error(`Failed to fetch sales data: ${res.status} ${res.statusText}`)
       }
-      const res = await fetch(
-        "https://api.opensea.io/api/v2/events/collection/cryptopunks?event_type=sale&limit=42",
-        { headers}
-      )
-      return res.json()
+
+      const json = await res.json()
+      console.log("✅ Data received:", json)
+      return json
     },
+    staleTime: 1000 * 60,
+    retry: 2,
   })
 
-
+  // ✅ FIX 2: proxy tx fetch through your own API route (protects API key)
   const { data: txData, isLoading: isTxLoading } = useQuery({
     queryKey: ["recentTransactions"],
     queryFn: async () => {
-       const headers: HeadersInit = {}
-      if (process.env.NEXT_PUBLIC_OPENSEA_API_KEY) {
-        headers['X-API-KEY'] = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
-      }
-      const res = await fetch(
-        "https://api.opensea.io/api/v2/events/collection/cryptopunks?event_type=transfer&limit=42",
-        { headers }
-      )
+      const res = await fetch("/api/opensea-transactions") // create this route just like opensea-sales
+      if (!res.ok) throw new Error("Failed to fetch tx data")
       return res.json()
     },
   })
 
-  const scrollAmount = 300
-
-
-const scrollLeft = (ref: React.RefObject<HTMLDivElement | null>) => {
-  ref.current?.scrollBy({ left: -300, behavior: "smooth" })
-}
-
-const scrollRight = (ref: React.RefObject<HTMLDivElement | null>) => {
-  ref.current?.scrollBy({ left: 300, behavior: "smooth" })
-}
-
-
-  const router = useRouter()
-
-  const handleMore =()=>{
-    router.push("/recent-transcations")
+  // ✅ FIX 4: smarter scroll (uses card width)
+  const getScrollAmount = (ref: React.RefObject<HTMLDivElement>) => {
+    if (ref.current?.firstChild instanceof HTMLElement) {
+      return ref.current.firstChild.clientWidth + 16 // card width + gap
+    }
+    return 300
   }
 
-  const handleSeeMoreLargestSales=()=>{
-      router.push("/largest-sales")
+  const scrollLeft = (ref: React.RefObject<HTMLDivElement>) => {
+    ref.current?.scrollBy({ left: -getScrollAmount(ref), behavior: "smooth" })
   }
+  const scrollRight = (ref: React.RefObject<HTMLDivElement>) => {
+    ref.current?.scrollBy({ left: getScrollAmount(ref), behavior: "smooth" })
+  }
+
+  const handleMore = () => router.push("/recent-transcations")
+  const handleSeeMoreLargestSales = () => router.push("/largest-sales")
+
   return (
     <section className="bg-white pt-20 sm:pt-32 lg:pt-[163px] py-8 sm:py-12 lg:py-16 w-full mb-0 overflow-hidden">
       <div className="px-4 sm:px-6 lg:px-10">
 
-
+        {/* Largest Sales */}
         <div className="flex flex-row items-center justify-between mb-6 sm:mb-8 lg:mb-[53px]">
-          <h2 className="text-2xl sm:text-3xl lg:text-[52px] font-medium">Largest Salessss</h2>
-          <button onClick={handleSeeMoreLargestSales} className="px-4 py-2 sm:px-6 sm:py-3 bg-black text-white rounded-full font-medium text-sm sm:text-base hover:bg-gray-800 transition-colors duration-200">
+          <h2 className="text-2xl sm:text-3xl lg:text-[52px] font-medium">Largest Sales</h2>
+          <button
+            onClick={handleSeeMoreLargestSales}
+            className="px-4 py-2 sm:px-6 sm:py-3 bg-black text-white rounded-full font-medium text-sm sm:text-base hover:bg-gray-800 transition-colors duration-200"
+          >
             Show More
           </button>
         </div>
@@ -79,9 +80,10 @@ const scrollRight = (ref: React.RefObject<HTMLDivElement | null>) => {
           >
             {isSalesLoading
               ? Array.from({ length: 3 }).map((_, i) => <SkeletonSaleCard key={i} />)
-              : salesData?.asset_events?.map((event:any, i:any) => (
+              : salesData?.asset_events?.map((event: any, i: number) => (
                   <div
-                    key={`${event.transaction}-${i}`}
+                    // ✅ FIX 3: safer key
+                    key={`${event.id || event.transaction || "event"}-${i}`}
                     className="bg-white rounded-2xl flex-shrink-0 w-64 sm:w-80 lg:w-[360px] shadow-md"
                   >
                     <img
@@ -94,8 +96,7 @@ const scrollRight = (ref: React.RefObject<HTMLDivElement | null>) => {
                         {event.nft?.name || event.asset?.name || `#${event.nft?.identifier}`}
                       </h3>
                       <span className="font-medium text-sm sm:text-base">
-                        {(Number(event.payment.quantity) /
-                          10 ** event.payment.decimals).toFixed(2)} Ξ
+                        {(Number(event.payment.quantity) / 10 ** event.payment.decimals).toFixed(2)} Ξ
                       </span>
                     </div>
                   </div>
@@ -103,28 +104,35 @@ const scrollRight = (ref: React.RefObject<HTMLDivElement | null>) => {
           </div>
         </div>
 
+        {/* Scroll Arrows for Sales */}
         <div className="flex flex-row items-center gap-2 sm:gap-2.5 mt-3 sm:mt-4">
           <div className="w-10 h-10 sm:w-12 sm:h-12 lg:w-[55px] lg:h-[55px] rounded-full border border-[#aab4b4] p-2 sm:p-2.5 lg:p-3">
             <HiArrowSmallLeft
-              onClick={() => scrollLeft(salesScrollRef!)}
+              onClick={() => scrollLeft(salesScrollRef)}
               className="w-full h-full cursor-pointer hover:text-gray-600 transition-colors"
             />
           </div>
           <div className="w-10 h-10 sm:w-12 sm:h-12 lg:w-[55px] lg:h-[55px] rounded-full border border-[#aab4b4] p-2 sm:p-2.5 lg:p-3">
             <HiArrowSmallRight
-              onClick={() => scrollRight(salesScrollRef!)}
+              onClick={() => scrollRight(salesScrollRef)}
               className="w-full h-full cursor-pointer hover:text-gray-600 transition-colors"
             />
           </div>
         </div>
 
+        {/* Recent Transactions */}
         <div className="mt-12 sm:mt-16 lg:mt-20">
           <div className="flex flex-row items-center justify-between mb-4 sm:mb-6">
             <div>
               <h2 className="text-2xl sm:text-3xl lg:text-[52px] font-medium">Recent Transactions</h2>
-              <h4 className="text-sm sm:text-base lg:text-[19px] text-gray-600 mt-1 sm:mt-2">Updated 20 seconds ago</h4>
+              <h4 className="text-sm sm:text-base lg:text-[19px] text-gray-600 mt-1 sm:mt-2">
+                Updated 20 seconds ago
+              </h4>
             </div>
-            <button onClick={handleMore} className="px-4 py-2 sm:px-6 sm:py-3 bg-black text-white rounded-full font-medium text-sm sm:text-base hover:bg-gray-800 transition-colors duration-200">
+            <button
+              onClick={handleMore}
+              className="px-4 py-2 sm:px-6 sm:py-3 bg-black text-white rounded-full font-medium text-sm sm:text-base hover:bg-gray-800 transition-colors duration-200"
+            >
               Show More
             </button>
           </div>
@@ -137,9 +145,9 @@ const scrollRight = (ref: React.RefObject<HTMLDivElement | null>) => {
           >
             {isTxLoading
               ? Array.from({ length: 3 }).map((_, i) => <SkeletonSaleCard key={i} />)
-              : txData?.asset_events?.map((event:any, i:any) => (
+              : txData?.asset_events?.map((event: any, i: number) => (
                   <div
-                    key={`${event.transaction}-${i}`}
+                    key={`${event.id || event.transaction || "tx"}-${i}`}
                     className="bg-white rounded-2xl flex-shrink-0 w-64 sm:w-80 lg:w-[360px] shadow-md"
                   >
                     <img
@@ -163,6 +171,7 @@ const scrollRight = (ref: React.RefObject<HTMLDivElement | null>) => {
           </div>
         </div>
 
+        {/* Scroll Arrows for Transactions */}
         <div className="flex flex-row items-center gap-2 sm:gap-2.5 mt-3 sm:mt-4">
           <div className="w-10 h-10 sm:w-12 sm:h-12 lg:w-[55px] lg:h-[55px] rounded-full border border-[#aab4b4] p-2 sm:p-2.5 lg:p-3">
             <HiArrowSmallLeft
