@@ -52,54 +52,52 @@ const { data: salesData, isLoading, isError } = useQuery({
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 bg-black text-white min-h-screen p-4 sm:p-6 lg:p-10 gap-4 sm:gap-6 lg:gap-10 overflow-x-hidden">
-      {salesData?.asset_events
-        ?.filter((event: any) => event.nft?.image_url || event.asset?.image_url)
-        ?.sort((a: any, b: any) => {
-          const priceA = Number(a.payment.quantity) / 10 ** a.payment.decimals
-          const priceB = Number(b.payment.quantity) / 10 ** b.payment.decimals
-          return priceB - priceA
-        })
-        .map((event: any, index: any) => {
-          const image = event.nft?.image_url || event.asset?.image_url
-          const name = event.nft?.name || event.asset?.name
-          const updated_at = event.nft?.updated_at || event.asset?.updated_at
-          const ethAmount = Number(event.payment.quantity) / 10 ** event.payment.decimals
-          const usdValue = ethAmount * ethPrice
+      {salesData?.nfts
+  ?.filter((nft: any) => nft.image_url)
+  .map((nft: any, index: number) => {
+    const image = nft.image_url
+    const name = nft.name
+    const updated_at = nft.updated_at
+    const ethAmount = nft.last_sale
+      ? Number(nft.last_sale.payment_quantity) / 10 ** nft.last_sale.payment_decimals
+      : 0
+    const usdValue = ethAmount * ethPrice
 
-          return (
-            <div
-              key={`${event.transaction}-${index}`}
-              className="bg-[#111] rounded-2xl hover:scale-105 hover:shadow-lg transition-all duration-300 w-full max-w-[400px] mx-auto"
-            >
-              {image && (
-                <img
-                  src={image}
-                  alt={name || 'NFT'}
-                  className="w-full h-48 sm:h-60 lg:h-80 object-cover rounded-t-2xl"
-                />
-              )}
+    return (
+      <div
+        key={`${nft.identifier}-${index}`}
+        className="bg-[#111] rounded-2xl hover:scale-105 hover:shadow-lg transition-all duration-300 w-full max-w-[400px] mx-auto"
+      >
+        {image && (
+          <img
+            src={image}
+            alt={name || "NFT"}
+            className="w-full h-48 sm:h-60 lg:h-80 object-cover rounded-t-2xl"
+          />
+        )}
 
-              <div className="p-3 sm:p-4">
-                <div className="mb-2 sm:mb-3">
-                  <h3 className="font-medium text-lg sm:text-xl lg:text-2xl truncate">
-                    #{event.nft?.identifier || 'N/A'}
-                  </h3>
-                  <span className="font-medium text-sm sm:text-base lg:text-lg block">
-                    {ethAmount.toFixed(2)}Ξ (${usdValue.toLocaleString()})
-                  </span>
-                </div>
+        <div className="p-3 sm:p-4">
+          <div className="mb-2 sm:mb-3">
+            <h3 className="font-medium text-lg sm:text-xl lg:text-2xl truncate">
+              #{nft.identifier || "N/A"}
+            </h3>
+            <span className="font-medium text-sm sm:text-base lg:text-lg block">
+              {ethAmount.toFixed(2)}Ξ (${usdValue.toLocaleString()})
+            </span>
+          </div>
 
-                <h5 className="font-medium text-xs sm:text-sm lg:text-base text-gray-400">
-                  {new Date(updated_at).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric',
-                  })}
-                </h5>
-              </div>
-            </div>
-          )
-        })}
+          <h5 className="font-medium text-xs sm:text-sm lg:text-base text-gray-400">
+            {new Date(updated_at).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+            })}
+          </h5>
+        </div>
+      </div>
+    )
+  })}
+
     </div>
   )
 }
