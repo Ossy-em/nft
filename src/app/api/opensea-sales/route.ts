@@ -2,7 +2,9 @@
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  console.log("🚀 API route hit: /api/opensea-sales"); // log to server console
+console.log("🔑 OPENSEA_API_KEY present?", !!process.env.OPENSEA_API_KEY);
+console.log("🔑 OPENSEA_API_KEY value:", process.env.OPENSEA_API_KEY?.slice(0, 4) + "..."); // mask it
+
 
   try {
     const res = await fetch("https://api.opensea.io/api/v2/events/collection/cryptopunks?event_type=sale&limit=42", {
