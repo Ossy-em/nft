@@ -8,11 +8,6 @@ import { useRouter } from "next/navigation";
 import SkeletonArticleCard from "@/components/SkeletonArticleCard"
 
 export default function About() {
-    interface Article {
-  id: number;
-  title: string;
-  url: string;
-}
     const [isConnected, setIsConnected] = useState(false);
     const [mintedCount, setMintedCount] = useState(0)
 
@@ -30,13 +25,13 @@ export default function About() {
         router.push("/collections");
     };
 
-    const { data, isLoading, isError } = useQuery<Article[]>({
+    const { data, isLoading, isError } = useQuery({
         queryKey: ['article'], queryFn: async () => { const res = await fetch('https://dev.to/api/articles?per_page=5'); return res.json() },
     });
 
     return (
         <section className="text-white w-full">
- 
+            {/* Hero Section */}
             <div className="text-white w-full py-16 lg:py-24">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center text-center">
                     <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl leading-tight mb-6">
@@ -55,10 +50,12 @@ export default function About() {
                     </div>
                 </div>
 
-           
+                {/* Scrolling Images */}
                 <div className="w-full overflow-hidden mt-16 lg:mt-24 py-4">
                     <div className="scroll-container">
-                   
+                        {isLoading ? (
+      <SkeletonScroll />
+    ) : (<>
                         <Image src="/about/Image (7).svg" alt="image" width={187} height={187} className="flex-shrink-0 w-32 h-32 sm:w-40 sm:h-40 lg:w-47 lg:h-47" />
                         <Image src="/about/Image.svg" alt="image" width={187} height={187} className="flex-shrink-0 w-32 h-32 sm:w-40 sm:h-40 lg:w-47 lg:h-47" />
                         <Image src="/about/Image (2).svg" alt="image" width={187} height={187} className="flex-shrink-0 w-32 h-32 sm:w-40 sm:h-40 lg:w-47 lg:h-47" />
@@ -67,7 +64,6 @@ export default function About() {
                         <Image src="/about/Image (5).svg" alt="image" width={187} height={187} className="flex-shrink-0 w-32 h-32 sm:w-40 sm:h-40 lg:w-47 lg:h-47" />
                         <Image src="/about/Image (6).svg" alt="image" width={187} height={187} className="flex-shrink-0 w-32 h-32 sm:w-40 sm:h-40 lg:w-47 lg:h-47" />
                         
-                       
                         <Image src="/about/Image (7).svg" alt="image" width={187} height={187} className="flex-shrink-0 w-32 h-32 sm:w-40 sm:h-40 lg:w-47 lg:h-47" />
                         <Image src="/about/Image.svg" alt="image" width={187} height={187} className="flex-shrink-0 w-32 h-32 sm:w-40 sm:h-40 lg:w-47 lg:h-47" />
                         <Image src="/about/Image (2).svg" alt="image" width={187} height={187} className="flex-shrink-0 w-32 h-32 sm:w-40 sm:h-40 lg:w-47 lg:h-47" />
@@ -75,11 +71,11 @@ export default function About() {
                         <Image src="/about/Image (4).svg" alt="image" width={187} height={187} className="flex-shrink-0 w-32 h-32 sm:w-40 sm:h-40 lg:w-47 lg:h-47" />
                         <Image src="/about/Image (5).svg" alt="image" width={187} height={187} className="flex-shrink-0 w-32 h-32 sm:w-40 sm:h-40 lg:w-47 lg:h-47" />
                         <Image src="/about/Image (6).svg" alt="image" width={187} height={187} className="flex-shrink-0 w-32 h-32 sm:w-40 sm:h-40 lg:w-47 lg:h-47" />
-                    </div>
+     </> )}  </div>
                 </div>
             </div>
 
- 
+            {/* Featured Articles Section */}
             <div className="w-full flex flex-col items-center py-16 lg:py-24">
                 <h1 className="text-2xl sm:text-3xl lg:text-4xl font-medium mb-12">Featured in</h1>
 
@@ -116,10 +112,10 @@ export default function About() {
                 </div>
             </div>
 
-  
+            {/* Meet the Punks Section */}
             <div className="bg-white">
                 <div className="bg-black rounded-b-3xl lg:rounded-b-5xl px-4 sm:px-6 lg:px-10 py-16 lg:py-24">
-               
+                    {/* Header Section */}
                     <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 mb-16 lg:mb-32">
                         <h1 className="text-3xl sm:text-4xl lg:text-5xl font-medium flex-shrink-0">
                             Meet the Punks
@@ -142,9 +138,9 @@ export default function About() {
                         </div>
                     </div>
 
-        
+                    {/* Info Cards and Image Section */}
                     <div className="flex flex-col xl:flex-row gap-8 lg:gap-16">
-                
+                        {/* Info Cards */}
                         <div className="flex flex-col gap-4 lg:gap-6 flex-1 max-w-2xl">
                             <div className="border border-[#565656] bg-[#638596] p-6 lg:p-10 rounded-2xl lg:rounded-3xl">
                                 <h1 className="text-xl sm:text-2xl lg:text-3xl leading-tight">
@@ -163,7 +159,7 @@ export default function About() {
                             </div>
                         </div>
 
-                   
+                        {/* Featured Image */}
                         <div className="flex-shrink-0 flex justify-center xl:justify-end">
                             <Image
                                 src="/feature/Frame.svg"
@@ -177,5 +173,21 @@ export default function About() {
                 </div>
             </div>
         </section>
-    )
-}
+
+       
+
+        
+                   ) }
+
+                   const SkeletonScroll = () => {
+  return (
+    <div className="flex gap-4 animate-pulse">
+      {Array.from({ length: 7 }).map((_, i) => (
+        <div
+          key={i}
+          className="flex-shrink-0 w-32 h-32 sm:w-40 sm:h-40 lg:w-47 lg:h-47 bg-gray-800 rounded-xl"
+        />
+      ))}
+    </div>
+  );
+};
