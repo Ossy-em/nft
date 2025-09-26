@@ -6,7 +6,8 @@ import { mainnet, sepolia } from "wagmi/chains";
 import { WagmiProvider } from "wagmi";
 import { ReactNode } from "react";
 
-const projectId = process.env.NEXT_PUBLIC_PROJECT_ID!;
+const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID!;
+
 
 const chains = [mainnet, sepolia] as const;
 
@@ -21,14 +22,14 @@ const wagmiConfig = defaultWagmiConfig({
   },
 });
 
-// Initialize Web3Modal once
+
 createWeb3Modal({
   wagmiConfig,
   projectId,
   themeMode: "dark",
 });
 
-// ✅ Use WagmiProvider (not WagmiConfig)
+
 export default function WalletProvider({ children }: { children: ReactNode }) {
   return <WagmiProvider config={wagmiConfig}>{children}</WagmiProvider>;
 }
