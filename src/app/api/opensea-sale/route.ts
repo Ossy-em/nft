@@ -7,7 +7,7 @@ export async function GET() {
     }
 
     const res = await fetch(
-      "https://api.opensea.io/api/v2/events/collection/cryptopunks?event_type=sale&limit=42",
+      "https://api.opensea.io/api/v2/events?event_type=transfer&limit=42",
       {
         headers: {
           "X-API-KEY": process.env.OPENSEA_API_KEY,
