@@ -30,19 +30,14 @@ interface Event {
 
 export default function RecentTransaction() {
   const { data: recent, isError, isLoading } = useQuery({
-    queryKey: ["recent"],
-    queryFn: async () => {
-      const headers: HeadersInit = {}
-      if (process.env.NEXT_PUBLIC_OPENSEA_API_KEY) {
-        headers["X-API-KEY"] = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
-      }
-      const res = await fetch(
-        "https://api.opensea.io/api/v2/events/collection/cryptopunks?event_type=sale&limit=18",
-        { headers }
-      )
-      return res.json()
-    },
-  })
+  queryKey: ["recent"],
+  queryFn: async () => {
+    const res = await fetch("/api/opensea-tx"); // 👈 your safe route
+    if (!res.ok) throw new Error("Failed to fetch recent transactions");
+    return res.json();
+  },
+});
+
 
   const { data: ethPriceData } = useQuery({
     queryKey: ["ethPrice"],
