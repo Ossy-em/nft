@@ -1,36 +1,70 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+NFT Portfolio Dashboard
 
-## Getting Started
+An interactive NFT portfolio app built with Next.js 14, React Query, and Wagmi + Web3Modal.
+It showcases trending collections, largest sales, and recent transactions — with wallet connect & mint functionality.
 
-First, run the development server:
+✨ Features
 
-```bash
+🔗 Connect Wallet (via Wagmi + Web3Modal)
+
+📊 Largest Sales & Top Collections (fetched live from OpenSea API)
+
+💸 Recent Transactions (via OpenSea Events endpoint)
+
+📰 News Section (fetched from Dev.to API) with tags nft & crypto
+
+🎨 Responsive & sleek UI from custom Figma design
+
+🛠 Tech Stack
+
+Framework: Next.js 14 (App Router)
+
+Data Fetching: @tanstack/react-query
+
+Blockchain Tools: Wagmi
+ + Web3Modal
+
+APIs:
+
+OpenSea API
+ → sales, collections, events
+
+Dev.to API
+ → crypto & NFT-related blog posts
+
+⚡ Installation & Setup
+
+Clone the repo:
+
+git clone https://github.com/YOUR_USERNAME/nft-portfolio.git
+cd nft-portfolio
+
+
+Install dependencies:
+
+npm install
+
+
+Create a .env.local file in the root with:
+
+NEXT_PUBLIC_PROJECT_ID=your_web3modal_project_id
+OPENSEA_API_KEY=your_opensea_api_key
+
+
+Run the dev server:
+
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000
+ 🚀
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+📚 API Endpoints (Server Routes)
 
-## Learn More
+/api/opensea-sales → fetches largest NFT sales
 
-To learn more about Next.js, take a look at the following resources:
+/api/opensea-collections → fetches top collections
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+/api/opensea-tx → fetches recent transactions (transfer events)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+/api/news → fetches Dev.to NFT & crypto blog posts

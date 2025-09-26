@@ -1,6 +1,7 @@
 import Providers from "./providers";
 import { Geist, Geist_Mono } from "next/font/google";
-import { WalletProvider } from "../providers/wallet-provider"
+import WalletProvider from "../providers/wallet-provider"
+
 import "./globals.css";
 
 const geistSans = Geist({
@@ -12,7 +13,6 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
-
 
 export default function RootLayout({
   children,

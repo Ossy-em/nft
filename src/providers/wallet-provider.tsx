@@ -1,39 +1,34 @@
-"use client"
+"use client";
 
-import React from "react"
-import { createWeb3Modal, defaultWagmiConfig } from "@web3modal/wagmi/react"
-import { WagmiConfig } from "wagmi"
-import { mainnet, polygon, arbitrum, sepolia } from "wagmi/chains"
+import { createWeb3Modal } from "@web3modal/wagmi/react";
+import { defaultWagmiConfig } from "@web3modal/wagmi";
+import { mainnet, sepolia } from "wagmi/chains";
+import { WagmiProvider } from "wagmi";
+import { ReactNode } from "react";
 
-// 1. Your WalletConnect Cloud project ID (get one free at https://cloud.walletconnect.com)
-const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID as string
+const projectId = process.env.NEXT_PUBLIC_PROJECT_ID!;
 
-if (!projectId) {
-  throw new Error("Missing NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID in .env.local")
-}
+const chains = [mainnet, sepolia] as const;
 
-// 2. Define chains
-const chains = [mainnet, polygon, arbitrum, sepolia]
-
-// 3. Create wagmi config
 const wagmiConfig = defaultWagmiConfig({
   chains,
   projectId,
   metadata: {
     name: "My NFT Portfolio App",
-    description: "Demo wallet connection",
-    url: "http://localhost:3000", // update when deployed
-    icons: ["https://avatars.githubusercontent.com/u/37784886"]
-  }
-})
+    description: "An NFT dashboard",
+    url: "https://myapp.com",
+    icons: ["https://myapp.com/icon.png"],
+  },
+});
 
-// 4. Create Web3Modal
+// Initialize Web3Modal once
 createWeb3Modal({
   wagmiConfig,
   projectId,
-  chains
-})
+  themeMode: "dark",
+});
 
-export function WalletProvider({ children }: { children: React.ReactNode }) {
-  return <WagmiConfig config={wagmiConfig}>{children}</WagmiConfig>
+// ✅ Use WagmiProvider (not WagmiConfig)
+export default function WalletProvider({ children }: { children: ReactNode }) {
+  return <WagmiProvider config={wagmiConfig}>{children}</WagmiProvider>;
 }
