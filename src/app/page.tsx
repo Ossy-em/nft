@@ -6,11 +6,12 @@ import About from "./components/about";
 import Collections from "./components/collections"
 import Faq from "./components/faq";
 import Footer from "@/app/components/footer"
+import W3MButton from "../buttons/w3m-button";
+import Link from "next/link";
+
 
 export default function Home() {
   const queryClient = new QueryClient()
-  const [isConnected, setIsConnected] = useState(false);
-  const [walletAddress, setWalletAddress] = useState("0x5aAe09f337Ef1BeAed");
   
   return (
     <div className="flex flex-col min-h-screen bg-black">
@@ -33,17 +34,15 @@ export default function Home() {
           
        
           <ul className="flex flex-col sm:flex-row text-base lg:text-lg font-medium text-white text-opacity-75 font-[Manrope] gap-4 lg:gap-9">
-            <li><a href="about" className="hover:text-white transition-colors">About</a></li>
-            <li><a href="collection" className="hover:text-white transition-colors">Collection</a></li>
-            <li><a href="faqs" className="hover:text-white transition-colors">FAQs</a></li>
+        <li><a href="" className="hover:text-white transition-colors">About</a></li>  
+            <li><a href="collections" className="hover:text-white transition-colors">Collection</a></li>
+           <Link href="/#FAQs" className="hover:text-white transition-colors">FAQs</Link> 
           </ul>
 
           <div className="flex flex-col sm:flex-row items-center gap-4 lg:gap-6">
          
             <div className="rounded-full bg-[#638596] hover:bg-[#4a6a7a] transition-colors">
-              <button className="text-base lg:text-lg px-4 lg:px-6 py-2 lg:py-3 text-[#C4EBFF] whitespace-nowrap">
-                Connect wallet
-              </button>
+              <W3MButton/>
             </div>
 
             

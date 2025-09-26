@@ -82,7 +82,7 @@ export default function Collections() {
         <div className="mt-12 sm:mt-16 lg:mt-20">
           <div className="flex flex-row items-center justify-between mb-4 sm:mb-6">
             <div>
-              <h2 className="text-2xl sm:text-3xl lg:text-[52px] font-medium">Recent Transactions</h2>
+              <h2 className="text-2xl sm:text-3xl lg:text-[52px] font-medium sm:text-black">Recent Transactions</h2>
               <h4 className="text-sm sm:text-base lg:text-[19px] text-gray-600 mt-1 sm:mt-2">Updated 20 seconds ago</h4>
             </div>
             <button

@@ -6,6 +6,7 @@ import Image from "next/image"
 import { MdArrowOutward } from "react-icons/md";
 import { useRouter } from "next/navigation";
 import SkeletonArticleCard from "@/components/SkeletonArticleCard"
+import MintButton from "@/buttons/MintButton";
 
 export default function About() {
     const [isConnected, setIsConnected] = useState(false);
@@ -26,7 +27,8 @@ export default function About() {
     };
 
     const { data, isLoading, isError } = useQuery({
-        queryKey: ['article'], queryFn: async () => { const res = await fetch('https://dev.to/api/articles?per_page=5'); return res.json() },
+        queryKey: ['article'], queryFn: async () => { const res = await fetch("https://dev.to/api/articles?tag=nft&per_page=5");
+; return res.json() },
     });
 
     return (
@@ -40,14 +42,9 @@ export default function About() {
                     <p className="max-w-2xl text-base sm:text-lg lg:text-xl mb-8 mx-auto">
                         10,000 unique collectible characters with proof of ownership stored on the Ethereum blockchain.
                     </p>
-                    <div className="bg-white rounded-full px-6 py-3 lg:px-8 lg:py-4">
-                        <button 
-                            className="text-black text-lg lg:text-xl font-medium" 
-                            onClick={() => handleAction(() => setMintedCount(mintedCount + 1))}
-                        >
-                            Mint <span className="font-bold">now</span>
-                        </button>
-                    </div>
+                   
+                      <MintButton/>
+                   
                 </div>
 
            

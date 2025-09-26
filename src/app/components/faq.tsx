@@ -104,7 +104,7 @@ export default function FaqSection() {
         </div>
       </section>
 
-      <section className="bg-black text-white px-4 sm:px-6 lg:px-10 py-16 lg:py-24 w-full">
+      <section id="FAQs" className="bg-black text-white px-4 sm:px-6 lg:px-10 py-16 lg:py-24 w-full">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-medium mb-12 lg:mb-24">
             Details and FAQ
