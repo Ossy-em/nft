@@ -32,7 +32,7 @@ export default function RecentTransaction() {
   const { data: recent, isError, isLoading } = useQuery({
   queryKey: ["recent"],
   queryFn: async () => {
-    const res = await fetch("/api/opensea-tx"); // 👈 your safe route
+    const res = await fetch("/api/opensea-recent"); // 👈 your safe route
     if (!res.ok) throw new Error("Failed to fetch recent transactions");
     return res.json();
   },
