@@ -31,7 +31,7 @@ export default function About() {
 
     return (
         <section className="text-white w-full">
-            {/* Hero Section */}
+       
             <div className="text-white w-full py-16 lg:py-24">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center text-center">
                     <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl leading-tight mb-6">
@@ -50,7 +50,7 @@ export default function About() {
                     </div>
                 </div>
 
-                {/* Scrolling Images */}
+           
                 <div className="w-full overflow-hidden mt-16 lg:mt-24 py-4">
                     <div className="scroll-container">
                         {isLoading ? (
@@ -75,7 +75,7 @@ export default function About() {
                 </div>
             </div>
 
-            {/* Featured Articles Section */}
+         
             <div className="w-full flex flex-col items-center py-16 lg:py-24">
                 <h1 className="text-2xl sm:text-3xl lg:text-4xl font-medium mb-12">Featured in</h1>
 
@@ -83,7 +83,7 @@ export default function About() {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
                         {isLoading
                             ? Array.from({ length: 3 }).map((_, i) => <SkeletonArticleCard key={i} />)
-                            : data?.slice(0, 3).map((article) => (
+                            : data?.slice(0, 3).map((article:any) => (
                                 <div key={article.id} className="flex flex-col border border-[#565656] rounded-3xl overflow-hidden">
                                     <div className="flex flex-col gap-4 p-6 border-b-2 border-[#565656] flex-1">
                                         <Image
@@ -112,10 +112,10 @@ export default function About() {
                 </div>
             </div>
 
-            {/* Meet the Punks Section */}
+           
             <div className="bg-white">
                 <div className="bg-black rounded-b-3xl lg:rounded-b-5xl px-4 sm:px-6 lg:px-10 py-16 lg:py-24">
-                    {/* Header Section */}
+                 
                     <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 mb-16 lg:mb-32">
                         <h1 className="text-3xl sm:text-4xl lg:text-5xl font-medium flex-shrink-0">
                             Meet the Punks
@@ -138,9 +138,9 @@ export default function About() {
                         </div>
                     </div>
 
-                    {/* Info Cards and Image Section */}
+        
                     <div className="flex flex-col xl:flex-row gap-8 lg:gap-16">
-                        {/* Info Cards */}
+            
                         <div className="flex flex-col gap-4 lg:gap-6 flex-1 max-w-2xl">
                             <div className="border border-[#565656] bg-[#638596] p-6 lg:p-10 rounded-2xl lg:rounded-3xl">
                                 <h1 className="text-xl sm:text-2xl lg:text-3xl leading-tight">
@@ -159,7 +159,7 @@ export default function About() {
                             </div>
                         </div>
 
-                        {/* Featured Image */}
+                    
                         <div className="flex-shrink-0 flex justify-center xl:justify-end">
                             <Image
                                 src="/feature/Frame.svg"

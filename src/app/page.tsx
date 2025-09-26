@@ -17,7 +17,7 @@ export default function Home() {
    
       <nav className="flex flex-col lg:flex-row w-full px-4 sm:px-6 lg:px-8 py-4 lg:py-6 bg-black text-white items-center gap-4 lg:gap-8">
         
-        {/* Logo */}
+
         <div className="flex-shrink-0">
           <Image
             src="/nav/Frame.svg"

@@ -50,7 +50,7 @@ export default function Collections() {
     <section className="bg-white pt-20 sm:pt-32 lg:pt-[163px] py-8 sm:py-12 lg:py-16 w-full mb-0 overflow-hidden">
       <div className="px-4 sm:px-6 lg:px-10">
 
-        {/* Largest Sales */}
+
         <div className="flex flex-row items-center justify-between mb-6 sm:mb-8 lg:mb-[53px]">
           <h2 className="text-2xl sm:text-3xl lg:text-[52px] font-medium">Largest Sales</h2>
           <button
@@ -79,7 +79,6 @@ export default function Collections() {
 
         <ScrollButtons onLeft={() => scrollLeft(salesScrollRef)} onRight={() => scrollRight(salesScrollRef)} />
 
-        {/* Recent Transactions */}
         <div className="mt-12 sm:mt-16 lg:mt-20">
           <div className="flex flex-row items-center justify-between mb-4 sm:mb-6">
             <div>
@@ -113,7 +112,6 @@ export default function Collections() {
 
         <ScrollButtons onLeft={() => scrollLeft(txScrollRef)} onRight={() => scrollRight(txScrollRef)} />
 
-        {/* Collections */}
         <div className="mt-12 sm:mt-16 lg:mt-20">
           <h2 className="text-2xl sm:text-3xl lg:text-[52px] font-medium mb-6">Top Collections</h2>
         </div>
@@ -141,7 +139,6 @@ export default function Collections() {
   )
 }
 
-/* --- Reusable card component --- */
 const Card = ({ image, title, subtitle }: { image: string; title: string; subtitle: string }) => (
   <div className="bg-white rounded-2xl flex-shrink-0 w-64 sm:w-80 lg:w-[360px] shadow-md">
     <img src={image} alt={title} className="w-full h-64 sm:h-80 lg:h-[360px] object-cover rounded-t-2xl" />
@@ -152,7 +149,6 @@ const Card = ({ image, title, subtitle }: { image: string; title: string; subtit
   </div>
 )
 
-/* --- Skeleton loader --- */
 const SkeletonSaleCard = () => (
   <div className="bg-white rounded-2xl flex-shrink-0 w-64 sm:w-80 lg:w-[360px] animate-pulse shadow-md">
     <div className="w-full h-64 sm:h-80 lg:h-[360px] bg-gray-300 rounded-t-2xl"></div>
@@ -163,7 +159,6 @@ const SkeletonSaleCard = () => (
   </div>
 )
 
-/* --- Scroll buttons --- */
 const ScrollButtons = ({ onLeft, onRight }: { onLeft: () => void; onRight: () => void }) => (
   <div className="flex flex-row items-center gap-2 sm:gap-2.5 mt-3 sm:mt-4">
     <div className="w-10 h-10 sm:w-12 sm:h-12 lg:w-[55px] lg:h-[55px] rounded-full border border-[#aab4b4] p-2 sm:p-2.5 lg:p-3">
